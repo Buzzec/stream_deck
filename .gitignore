@@ -1,0 +1,4 @@
+/target
+.idea
+tests/net.buzzec.test.sdPlugin
+!tests/net.buzzec.test.sdPlugin/assets
