@@ -1,6 +1,6 @@
+use crate::common::Context;
 use crate::events::sent::SendableEvent;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 /// The plugin can send a setTitle event to the Stream Deck application to dynamically change the
 /// title displayed by an instance of an action.
@@ -11,7 +11,7 @@ use serde_json::Value;
 #[serde(rename_all = "camelCase")]
 pub struct SetTitle {
     /// A value to Identify the instance's action you want to modify.
-    pub context: Value,
+    pub context: Context,
     /// A JSON object
     pub payload: SetTitlePayload,
 }

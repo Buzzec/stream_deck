@@ -20,6 +20,7 @@ pub mod will_disappear;
 pub use super::common::*;
 use crate::error::Error;
 use serde_json::Value;
+use tokio_tungstenite::tungstenite::Message;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum PluginReceivedEvent {
@@ -43,6 +44,24 @@ pub enum PluginReceivedEvent {
     PropertyInspectorDidAppear(property_inspector_did_appear::PropertyInspectorDidAppear),
     PropertyInspectorDidDisappear(property_inspector_did_disappear::PropertyInspectorDidDisappear),
     SendToPlugin(send_to_plugin::SendToPlugin),
+}
+impl TryFrom<Message> for PluginReceivedEvent {
+    type Error = Error;
+
+    fn try_from(value: Message) -> Result<Self, Self::Error> {
+        match value {
+            Message::Text(message) => Self::try_from(message),
+            Message::Binary(message) => Self::try_from(serde_json::from_slice::<Value>(&message)?),
+            x => Err(Error::MessageCannotBeParsed(x)),
+        }
+    }
+}
+impl TryFrom<String> for PluginReceivedEvent {
+    type Error = Error;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Self::try_from(serde_json::from_str::<Value>(&value)?)
+    }
 }
 impl TryFrom<Value> for PluginReceivedEvent {
     type Error = Error;

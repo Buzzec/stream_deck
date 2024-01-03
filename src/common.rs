@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Serialize, Deserialize, Clone, Debug, Copy, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -70,6 +71,19 @@ pub enum DeviceType {
     StreamDeckPlus,
 }
 
+#[derive(Serialize_repr, Deserialize_repr, Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
+pub enum DeviceTypeInteger {
+    StreamDeck = 0,
+    StreamDeckMini = 1,
+    StreamDeckXL = 2,
+    StreamDeckMobile = 3,
+    CorsairGKeys = 4,
+    StreamDeckPedal = 5,
+    CorsairVoyager = 6,
+    StreamDeckPlus = 7,
+}
+
 /// The size of a device.
 #[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq, Copy)]
 #[serde(rename_all = "camelCase")]
@@ -77,3 +91,5 @@ pub struct DeviceSize {
     pub columns: u32,
     pub rows: u32,
 }
+
+pub type Context = String;

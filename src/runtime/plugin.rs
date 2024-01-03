@@ -28,9 +28,14 @@ pub struct Registration {
 }
 impl Registration {
     #[instrument]
-    pub async fn register() -> Result<Self> {
-        let mut args = args().skip(1);
-        let port_text = args.next().ok_or(Error::PluginMissingArgs)?;
+    pub async fn register_from_args() -> Result<Self> {
+        Self::register(args()).await
+    }
+
+    #[instrument(skip_all)]
+    pub async fn register(args: impl IntoIterator<Item = String>) -> Result<Self> {
+        let mut args = args.into_iter().skip(1);
+        let port_text: String = args.next().ok_or(Error::PluginMissingArgs)?;
         if port_text != "-port" {
             return Err(Error::PluginInvalidArg {
                 expected: "-port".to_string(),
@@ -41,7 +46,7 @@ impl Registration {
             .next()
             .ok_or(Error::PluginMissingArgs)?
             .parse::<u16>()?;
-        let plugin_uuid_text = args.next().ok_or(Error::PluginMissingArgs)?;
+        let plugin_uuid_text: String = args.next().ok_or(Error::PluginMissingArgs)?;
         if plugin_uuid_text != "-pluginUUID" {
             return Err(Error::PluginInvalidArg {
                 expected: "-pluginUUID".to_string(),
@@ -49,7 +54,7 @@ impl Registration {
             });
         }
         let plugin_uuid = args.next().ok_or(Error::PluginMissingArgs)?;
-        let register_event_text = args.next().ok_or(Error::PluginMissingArgs)?;
+        let register_event_text: String = args.next().ok_or(Error::PluginMissingArgs)?;
         if register_event_text != "-registerEvent" {
             return Err(Error::PluginInvalidArg {
                 expected: "-registerEvent".to_string(),
@@ -57,7 +62,7 @@ impl Registration {
             });
         }
         let register_event = args.next().ok_or(Error::PluginMissingArgs)?;
-        let info_text = args.next().ok_or(Error::PluginMissingArgs)?;
+        let info_text: String = args.next().ok_or(Error::PluginMissingArgs)?;
         if info_text != "-info" {
             return Err(Error::PluginInvalidArg {
                 expected: "-info".to_string(),
@@ -152,7 +157,7 @@ impl Registration {
         })
     }
 
-    pub async fn send_event(&mut self, event: &impl SendableEvent) -> Result<()> {
+    pub fn send_event(&mut self, event: &impl SendableEvent) -> Result<()> {
         let message = serialize_event(event)?.to_string();
         debug!("Sending Message: {message}");
         self.sends.send(Message::Text(message)).unwrap();

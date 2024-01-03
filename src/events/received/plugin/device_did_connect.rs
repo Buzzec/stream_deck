@@ -1,5 +1,4 @@
-use crate::common::DeviceType;
-use crate::events::Coordinates;
+use crate::common::{DeviceSize, DeviceTypeInteger};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -21,9 +20,9 @@ pub struct DeviceDidConnect {
 pub struct DeviceInfo {
     /// Type of device.
     #[serde(rename = "type")]
-    pub device_type: DeviceType,
+    pub device_type: DeviceTypeInteger,
     /// The number of columns and rows of keys that the device owns.
-    pub size: Coordinates,
+    pub size: DeviceSize,
     /// The name of the device set by the user.
     pub name: String,
 }
